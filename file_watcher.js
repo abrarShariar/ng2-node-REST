@@ -4,7 +4,7 @@ const mysql = require('mysql');
 var exports = module.exports = {};
 
 //create connection
-const connection = mysql.createConnection({
+let connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
 	password: 'root',
@@ -20,6 +20,9 @@ connection.connect(function(err) {
 });
 
 
+/*
+*	function to keep watching filesystem recursively for changes
+*/
 exports.startFileWatcher = function(){
 	let file_ext = ['mkv','mp4','flv','wmv','mov'];
 	chokidar.watch('.', {ignored: /[\/\\]\./}).on('all', (event, path) => {
@@ -58,40 +61,45 @@ exports.startFileWatcher = function(){
 
 			//check if data already exists in DB
 			connection.query('SELECT title FROM `all_videos` WHERE `title` = ?', [title] , function(error, results, fields){
-				if(results.length <= 0){
+				console.log(results.length);
+				// item does not exist in DB
+				if(results.length === 0){
 					imdb.getReq({ name: name })
 					.then(function(res){
-						imdb_data = res;
 						title = name;
-						released = imdb_data['released'];
-						runtime = imdb_data['runtime'];
-						genres = imdb_data['genres'];
-						director = imdb_data['director'];
-						writer = imdb_data['writer'];
-						actors = imdb_data['actors'];
-						plot = imdb_data['plot'];
-						languages = imdb_data['languages'];
-						country = imdb_data['country'];
-						awards = imdb_data['awards'];
-						poster = imdb_data['poster'];
-						rating = imdb_data['rating'];
-						votes = imdb_data['votes'];
-						type = imdb_data['type'];
-						imdburl = imdb_data['imdburl'];	
+						released = res['released'];
+						runtime = res['runtime'];
+						genres = res['genres'];
+						director = res['director'];
+						writer = res['writer'];
+						actors = res['actors'];
+						plot = res['plot'];
+						languages = res['languages'];
+						country = res['country'];
+						awards = res['awards'];
+						poster = res['poster'];
+						rating = res['rating'];
+						votes = res['votes'];
+						type = res['type'];
+						imdburl = res['imdburl'];	
 						//insert data into DB
-						let data = { title:title, type:type, languages:languages, genres:genres, video_path:full_path };
+						let data = { title:title, plot: plot, type:type, languages:languages, genres:genres, video_path:full_path };
 						let query = connection.query('INSERT INTO all_videos SET ? ', data, function (error, results, fields) {
 							if (error) throw error;
 						});
 						console.log(query.sql);
 					},function(err){
-						//insert data into DB
-						let data = { title:title, type:type, languages:languages, genres:genres, video_path:full_path };
+						console.log("ERROR");
+						// insert data into DB
+						let data = { title:title, plot: plot, type:type, languages:languages, genres:genres, video_path:full_path };
 						let query = connection.query('INSERT INTO all_videos SET ? ', data, function (error, results, fields) {
 							if (error) throw error;
 						});
 						console.log(query.sql);
 					});
+				}else{
+					//item exist in DB
+					console.log(title + ' EXISTS IN DB');
 				}
 			});
 		}
