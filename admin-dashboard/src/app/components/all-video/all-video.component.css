@@ -1,0 +1,20 @@
+.widget-user .widget-user-image>img {
+	width: 50px;
+	height: 50px;
+}
+
+.widget-user .widget-user-image {
+	left: 90%;
+}
+
+.box-widget{
+	margin-bottom: 10px;
+}
+
+#all_video_box{
+	padding-left: 0px;
+}
+
+a:hover{
+	cursor:pointer;
+}

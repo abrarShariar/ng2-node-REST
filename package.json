@@ -9,6 +9,7 @@
   "author": "abrarshariar.com",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.16.1",
     "chokidar": "^1.6.1",
     "express": "^4.14.1",
     "imdb-api": "^2.2.1",

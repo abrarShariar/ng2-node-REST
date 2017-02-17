@@ -1,0 +1,77 @@
+<div class="" *ngFor='let video of videoDetail'>
+	<h1> {{ video.title }} <small> {{ video.type }} [ {{ video.languages }} ] </small></h1><hr>
+	<form>
+		<div class="form-group">
+			<label for="geners">Geners: </label>&nbsp;<em class="help"> (comma separated for multiple geners)</em>
+			<input type="text" class="form-control" id="geners" value="{{ video.genres }}">
+		</div>
+
+		<div class="form-group">
+			<label for="geners">Geners: </label>&nbsp;<em class="help"> (comma separated for multiple geners)</em>
+			<input type="text" class="form-control" id="geners" value="{{ video.genres }}">
+		</div>
+
+		<div class="form-group">
+			<label for="plot">Plot: </label>
+			<textarea name="plot" class="form-control" rows="6"> {{ video.plot }} </textarea>
+		</div>
+
+		<div class="form-group"> 
+			<label for="video_path">Video Path: </label> &nbsp;<em class="help"> (uneditable)</em>
+			<input disabled type="text" class="form-control" id="video_path" value="{{ video.video_path }}">
+		</div>
+
+		<div class="form-group"> 
+			<label for="imdburl">IMDB URL: </label> &nbsp;<em class="help"> (uneditable)</em>
+			<input disabled type="text" class="form-control" id="imdburl" value="{{ video.imdburl }}">
+		</div>
+
+		<div class="form-group"> 
+			<label for="released">Released: </label>
+			<input type="text" class="form-control" id="released" value="{{ video.released }}">
+		</div>
+
+		<div class="form-group"> 
+			<label for="runtime">Runtime: </label>
+			<input type="text" class="form-control" id="runtime" value="{{ video.runtime }}">
+		</div>
+
+		<div class="form-group"> 
+			<label for="director">Director: </label> &nbsp;<em class="help"> (comma separated for multiple directors)</em>
+			<input type="text" class="form-control" id="director" value="{{ video.director }}">
+		</div>
+
+		<div class="form-group"> 
+			<label for="writer">Writer: </label> &nbsp;<em class="help"> (comma separated for multiple writers)</em>
+			<input type="text" class="form-control" id="writer" value="{{ video.writer }}">
+		</div>
+
+		<div class="form-group"> 
+			<label for="actors">Actor: </label> &nbsp;<em class="help"> (comma separated for multiple actors)</em>
+			<input type="text" class="form-control" id="actors" value="{{ video.actors }}">
+		</div>
+
+		<div class="form-group"> 
+			<label for="country">Country: </label> &nbsp;<em class="help"> (comma separated for multiple countries)</em>
+			<input type="text" class="form-control" id="country" value="{{ video.country }}">
+		</div>
+
+		<div class="form-group"> 
+			<label for="awards">Awards: </label> 
+			<input type="text" class="form-control" id="awards" value="{{ video.awards }}">
+		</div>
+
+		<div class="form-group"> 
+			<label for="rating">Rating: </label> 
+			<input type="text" class="form-control" id="rating" value="{{ video.rating }}">
+		</div>
+
+		<div class="form-group"> 
+			<label for="votes">Votes: </label> 
+			<input type="text" class="form-control" id="votes" value="{{ video.votes }}">
+		</div>
+
+		<button type="submit" class="btn btn-default" (click)="goBack()">Go Back</button>
+		<button type="submit" class="btn btn-success">Save</button>
+	</form>
+</div>

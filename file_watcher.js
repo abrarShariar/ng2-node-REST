@@ -2,6 +2,7 @@ const chokidar = require('chokidar');
 const imdb = require('imdb-api');
 const mysql = require('mysql');
 var exports = module.exports = {};
+let watcher;
 
 //create connection
 let connection = mysql.createConnection({
@@ -24,8 +25,9 @@ connection.connect(function(err) {
 *	function to keep watching filesystem recursively for changes
 */
 exports.startFileWatcher = function(){
+
 	let file_ext = ['mkv','mp4','flv','wmv','mov'];
-	chokidar.watch('.', {ignored: /[\/\\]\./}).on('all', (event, path) => {
+	watcher = chokidar.watch('.', {ignored: /[\/\\]\./}).on('all', (event, path) => {
 		let full_path = path;
 		let separated_path = full_path.split('/');
 		let last_item = separated_path[separated_path.length - 1];
@@ -83,15 +85,14 @@ exports.startFileWatcher = function(){
 						type = res['type'];
 						imdburl = res['imdburl'];	
 						//insert data into DB
-						let data = { title:title, plot: plot, type:type, languages:languages, genres:genres, video_path:full_path };
-						let query = connection.query('INSERT INTO all_videos SET ? ', data, function (error, results, fields) {
+						let data = { title:title, plot: plot, type:type, languages:languages, genres:genres, video_path:full_path, released:released, runtime:runtime, director:director, writer:writer, actors:actors, country: country, awards:awards, poster:poster, rating: rating, votes: votes, imdburl:imdburl };						let query = connection.query('INSERT INTO all_videos SET ? ', data, function (error, results, fields) {
 							if (error) throw error;
 						});
 						console.log(query.sql);
 					},function(err){
 						console.log("ERROR");
 						// insert data into DB
-						let data = { title:title, plot: plot, type:type, languages:languages, genres:genres, video_path:full_path };
+						let data = { title:title, plot: plot, type:type, languages:languages, genres:genres, video_path:full_path, released:released, runtime:runtime, director:director, writer:writer, actors:actors, country: country, awards:awards, poster:poster, rating: rating, votes: votes, imdburl:imdburl };
 						let query = connection.query('INSERT INTO all_videos SET ? ', data, function (error, results, fields) {
 							if (error) throw error;
 						});
@@ -117,3 +118,15 @@ exports.startFileWatcher = function(){
 	}
 });
 }
+
+/*
+*	function for stopping file watcher
+*/
+exports.stopFileWatcher = function(){
+	if(watcher.close()){
+		return true;
+	}else{
+		return false;
+	}
+}
+

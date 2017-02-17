@@ -1,0 +1,20 @@
+export class Video{
+	id:number;
+	title:string;
+	plot:string;
+	type:string;
+	languages:string;
+	genres:string;
+	video_path:string;
+	released:string;
+	runtime:string;
+	director:string;
+	writer:string;
+	actors:string;
+	country:string;
+	awards:string;
+	poster:string;
+	rating:string;
+	votes:string;
+	imdburl:string;
+}

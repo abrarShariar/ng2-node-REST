@@ -1,0 +1,24 @@
+<h1> {{ title }} </h1><hr>
+<div class="col-md-12" *ngIf="allVideo" >
+	<div class="col-md-3" *ngFor="let video of allVideo | paginate: { itemsPerPage: 40, currentPage: p }" id="all_video_box">
+		<a [routerLink]="['/admin/video/details', video.id]">
+			<div class="box box-widget widget-user">
+				<div class="widget-user-header bg-aqua-active">
+					<h4 class="widget-user-username">{{ video.title }} </h4>
+					<h6 class="widget-user-desc">{{ video.type }} | {{ video.languages }}</h6>
+				</div>
+				<div class="widget-user-image">
+					<img class="img-circle" src="{{ video.poster }}" alt="Video Avatar">
+				</div>
+			</div>
+		</a>
+	</div>
+</div>
+<div style="margin-top: 100px">
+	<pagination-controls (pageChange)="p = $event"></pagination-controls>	
+</div>
+
+
+
+
+
