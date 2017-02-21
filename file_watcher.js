@@ -1,6 +1,8 @@
 const chokidar = require('chokidar');
 const imdb = require('imdb-api');
 const mysql = require('mysql');
+const request = require('request');
+const fs = require('fs');
 var exports = module.exports = {};
 let watcher;
 
@@ -11,6 +13,7 @@ let connection = mysql.createConnection({
 	password: 'root',
 	database: 'movieDB'
 });
+
 //check connection
 connection.connect(function(err) {
 	if (err) {
@@ -20,12 +23,23 @@ connection.connect(function(err) {
 	console.log('connected as id ' + connection.threadId);
 });
 
+/*
+* local function for donloading poster image from API
+*/
+var download = function(uri, filename, callback){
+	request.head(uri, function(err, res, body){
+		console.log('content-type:', res.headers['content-type']);
+		console.log('content-length:', res.headers['content-length']);
+		request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+	});
+}
+
 
 /*
 *	function to keep watching filesystem recursively for changes
 */
 exports.startFileWatcher = function(){
-
+	console.log("File Watcher Started");
 	let file_ext = ['mkv','mp4','flv','wmv','mov'];
 	watcher = chokidar.watch('.', {ignored: /[\/\\]\./}).on('all', (event, path) => {
 		let full_path = path;
@@ -56,7 +70,8 @@ exports.startFileWatcher = function(){
 			let languages = '';
 			let country = '';
 			let awards = '';
-			let poster = '';
+			let poster_api = '';
+			let poster_path = '';
 			let rating = '';
 			let votes = '';
 			let imdburl = '';
@@ -79,20 +94,27 @@ exports.startFileWatcher = function(){
 						languages = res['languages'];
 						country = res['country'];
 						awards = res['awards'];
-						poster = res['poster'];
+						poster_api = res['poster'];
 						rating = res['rating'];
 						votes = res['votes'];
 						type = res['type'];
-						imdburl = res['imdburl'];	
-						//insert data into DB
-						let data = { title:title, plot: plot, type:type, languages:languages, genres:genres, video_path:full_path, released:released, runtime:runtime, director:director, writer:writer, actors:actors, country: country, awards:awards, poster:poster, rating: rating, votes: votes, imdburl:imdburl };						let query = connection.query('INSERT INTO all_videos SET ? ', data, function (error, results, fields) {
-							if (error) throw error;
+						imdburl = res['imdburl'];
+
+						//download poster locally
+						var poster_filename = poster_api.split('/');
+						download(poster_api, "./site/src/posters/" + poster_filename[poster_filename.length - 1], function(){
+							poster_path = poster_filename[poster_filename.length - 1];
+							//insert data into DB
+							let data = { title:title, plot: plot, type:type, languages:languages, genres:genres, video_path:full_path, released:released, runtime:runtime, director:director, writer:writer, actors:actors, country: country, awards:awards, poster_api:poster_api, poster_path:poster_path, rating: rating, votes: votes, imdburl:imdburl };						
+							let query = connection.query('INSERT INTO all_videos SET ? ', data, function (error, results, fields) {
+								if (error) throw error;
+							});
+							console.log(query.sql);
 						});
-						console.log(query.sql);
 					},function(err){
 						console.log("ERROR");
 						// insert data into DB
-						let data = { title:title, plot: plot, type:type, languages:languages, genres:genres, video_path:full_path, released:released, runtime:runtime, director:director, writer:writer, actors:actors, country: country, awards:awards, poster:poster, rating: rating, votes: votes, imdburl:imdburl };
+						let data = { title:title, plot: plot, type:type, languages:languages, genres:genres, video_path:full_path, released:released, runtime:runtime, director:director, writer:writer, actors:actors, country: country, awards:awards, poster_api:poster_api, poster_path:poster_path, rating: rating, votes: votes, imdburl:imdburl };
 						let query = connection.query('INSERT INTO all_videos SET ? ', data, function (error, results, fields) {
 							if (error) throw error;
 						});
@@ -118,7 +140,6 @@ exports.startFileWatcher = function(){
 	}
 });
 }
-
 /*
 *	function for stopping file watcher
 */
@@ -129,4 +150,3 @@ exports.stopFileWatcher = function(){
 		return false;
 	}
 }
-

@@ -23,7 +23,7 @@ connection.connect(function(err) {
 *ROUTES for RESTful backend
 */
 api.get('/',function(req, res){
-	res.send('Hello World !!');
+	res.send('Hello Cyber Solutions BD !!');
 });
 
 //send all rows from all_videos 
@@ -69,11 +69,19 @@ api.get('/api/videos/total_count',function(req, res){
 	});
 });
 
-// //drop all_videos table from DB
-// api.get('/api/videos/drop/all_videos',function(req, res){
-// 	res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-// 	res.setHeader('Content-Type', 'application/json');
-// });
+//drop all_videos table from DB
+api.get('/api/truncate/all_videos',function(req, res){
+	res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+	res.setHeader('Content-Type', 'application/json');
+	connection.query('TRUNCATE TABLE `all_videos`',function(error, results, fileds){
+		if(error) throw error;
+		if(results.length <= 0){
+			res.json('NULL');
+		}else{
+			res.json(results);
+		}
+	});
+});
 
 //restart / start file watcher
 api.get('/api/file_watcher/start',function(req, res){

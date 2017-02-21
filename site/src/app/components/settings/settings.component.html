@@ -1,0 +1,13 @@
+<h1> {{ title }} </h1>
+
+<div *ngIf="checkClean">
+	<h3>Do you really want to delete all data from Database ? </h3>
+	<button type="button" class="btn btn-success"> Yes </button> 
+	<button type="button" class="btn btn-danger" (click)="noCleanDB()"> No </button>
+</div>
+<br>
+
+<div>
+	<button type="button" class="btn btn-danger" (click)="checkBeforeCleanDB()"> Clean Database </button>
+	<button type="button" class="btn btn-primary" (click)="restartFileWatcher()">Restart File Watcher</button>
+</div>

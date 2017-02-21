@@ -13,7 +13,8 @@ export class Video{
 	actors:string;
 	country:string;
 	awards:string;
-	poster:string;
+	poster_api:string;
+	poster_path:string;
 	rating:string;
 	votes:string;
 	imdburl:string;
